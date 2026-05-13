@@ -2,6 +2,8 @@
 
 My personal config for tmux and friends. One-line setup on any new Linux/macOS box.
 
+Tested on Ubuntu and macOS. Installer uses bash 3.2-compatible syntax (works with Apple's default `/bin/bash`).
+
 ## Quick install
 
 ```bash
@@ -15,7 +17,7 @@ The installer:
 2. Backs up an existing `~/.tmux.conf` (timestamped) and symlinks the version in this repo.
 3. Clones [TPM](https://github.com/tmux-plugins/tpm) if missing.
 4. Installs all plugins declared in `tmux/tmux.conf` (catppuccin theme, yank, vim-tmux-navigator, sensible).
-5. *Optionally* downloads JetBrainsMono Nerd Font into `~/.local/share/fonts/` (Linux only) so the status-bar glyphs render correctly. Skip with `n` if you don't want it.
+5. *Optionally* downloads JetBrainsMono Nerd Font. Destination depends on OS: `~/.local/share/fonts/` (Linux), `~/Library/Fonts/` (macOS). Skip with `n` if you don't want it.
 6. Reloads any running tmux server.
 
 Re-running is safe — it's idempotent.

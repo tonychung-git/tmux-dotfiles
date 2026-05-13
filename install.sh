@@ -52,30 +52,45 @@ log "Installing tmux plugins via TPM"
 ok "Plugins installed"
 
 # ── 5. (Optional) install JetBrainsMono Nerd Font for the catppuccin glyphs ──
-# Skips if a Nerd Font is already detected. SSH users: the font has to be
-# installed on your *client* machine (the one rendering the terminal),
+# SSH users: install the font on the *client* (the box rendering the terminal),
 # not the server you SSH into.
-if command -v fc-list >/dev/null 2>&1; then
-  if fc-list | grep -qi "nerd"; then
-    ok "A Nerd Font is already installed"
-  else
-    read -r -p "Install JetBrainsMono Nerd Font to ~/.local/share/fonts? [y/N] " ans
-    if [[ "${ans,,}" == "y" ]]; then
-      log "Downloading JetBrainsMono Nerd Font (~120 MB)"
-      tmp="$(mktemp -d)"
-      curl -fsSL -o "$tmp/JetBrainsMono.zip" \
-        "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
-      mkdir -p "$HOME/.local/share/fonts/JetBrainsMonoNerd"
-      unzip -q -o "$tmp/JetBrainsMono.zip" -d "$HOME/.local/share/fonts/JetBrainsMonoNerd/"
-      rm -rf "$tmp"
-      fc-cache -f "$HOME/.local/share/fonts/" >/dev/null
-      ok "JetBrainsMono Nerd Font installed"
-    else
-      warn "Skipped font install. catppuccin glyphs will look broken until a Nerd Font is set in your terminal."
-    fi
-  fi
+OS="$(uname -s)"
+case "$OS" in
+  Linux)  FONT_DIR="$HOME/.local/share/fonts/JetBrainsMonoNerd" ;;
+  Darwin) FONT_DIR="$HOME/Library/Fonts/JetBrainsMonoNerd" ;;
+  *)      FONT_DIR="" ;;
+esac
+
+font_already_installed() {
+  case "$OS" in
+    Linux)  command -v fc-list >/dev/null 2>&1 && fc-list | grep -qi "nerd" ;;
+    Darwin) ls "$HOME/Library/Fonts" /Library/Fonts 2>/dev/null | grep -qi "nerd" ;;
+    *)      return 1 ;;
+  esac
+}
+
+if [[ -z "$FONT_DIR" ]]; then
+  warn "Unrecognised OS ($OS); skipping font install."
+elif font_already_installed; then
+  ok "A Nerd Font is already installed"
 else
-  warn "fc-list not available; skipping font check (likely macOS or minimal container)."
+  read -r -p "Install JetBrainsMono Nerd Font to $FONT_DIR? [y/N] " ans
+  ans="$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')"
+  if [[ "$ans" == "y" || "$ans" == "yes" ]]; then
+    log "Downloading JetBrainsMono Nerd Font (~120 MB)"
+    tmp="$(mktemp -d)"
+    curl -fsSL -o "$tmp/JetBrainsMono.zip" \
+      "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
+    mkdir -p "$FONT_DIR"
+    unzip -q -o "$tmp/JetBrainsMono.zip" -d "$FONT_DIR/"
+    rm -rf "$tmp"
+    if [[ "$OS" == "Linux" ]] && command -v fc-cache >/dev/null 2>&1; then
+      fc-cache -f "$(dirname "$FONT_DIR")" >/dev/null
+    fi
+    ok "JetBrainsMono Nerd Font installed to $FONT_DIR"
+  else
+    warn "Skipped font install. catppuccin glyphs will look broken until a Nerd Font is set in your terminal."
+  fi
 fi
 
 # ── 6. Reload running tmux server, if any ─────────────────────────────────────
