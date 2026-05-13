@@ -74,22 +74,36 @@ if [[ -z "$FONT_DIR" ]]; then
 elif font_already_installed; then
   ok "A Nerd Font is already installed"
 else
-  read -r -p "Install JetBrainsMono Nerd Font to $FONT_DIR? [y/N] " ans
-  ans="$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')"
-  if [[ "$ans" == "y" || "$ans" == "yes" ]]; then
-    log "Downloading JetBrainsMono Nerd Font (~120 MB)"
-    tmp="$(mktemp -d)"
-    curl -fsSL -o "$tmp/JetBrainsMono.zip" \
-      "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
-    mkdir -p "$FONT_DIR"
-    unzip -q -o "$tmp/JetBrainsMono.zip" -d "$FONT_DIR/"
-    rm -rf "$tmp"
-    if [[ "$OS" == "Linux" ]] && command -v fc-cache >/dev/null 2>&1; then
-      fc-cache -f "$(dirname "$FONT_DIR")" >/dev/null
+  # On macOS with Homebrew, the cask is the cleaner path (brew-managed,
+  # upgradable). Fall back to a direct zip download otherwise.
+  if [[ "$OS" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
+    read -r -p "Install JetBrainsMono Nerd Font via Homebrew cask? [y/N] " ans
+    ans="$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')"
+    if [[ "$ans" == "y" || "$ans" == "yes" ]]; then
+      log "Running: brew install --cask font-jetbrains-mono-nerd-font"
+      brew install --cask font-jetbrains-mono-nerd-font
+      ok "JetBrainsMono Nerd Font installed via Homebrew"
+    else
+      warn "Skipped font install. catppuccin glyphs will look broken until a Nerd Font is set in your terminal."
     fi
-    ok "JetBrainsMono Nerd Font installed to $FONT_DIR"
   else
-    warn "Skipped font install. catppuccin glyphs will look broken until a Nerd Font is set in your terminal."
+    read -r -p "Install JetBrainsMono Nerd Font to $FONT_DIR? [y/N] " ans
+    ans="$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')"
+    if [[ "$ans" == "y" || "$ans" == "yes" ]]; then
+      log "Downloading JetBrainsMono Nerd Font (~120 MB)"
+      tmp="$(mktemp -d)"
+      curl -fsSL -o "$tmp/JetBrainsMono.zip" \
+        "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
+      mkdir -p "$FONT_DIR"
+      unzip -q -o "$tmp/JetBrainsMono.zip" -d "$FONT_DIR/"
+      rm -rf "$tmp"
+      if [[ "$OS" == "Linux" ]] && command -v fc-cache >/dev/null 2>&1; then
+        fc-cache -f "$(dirname "$FONT_DIR")" >/dev/null
+      fi
+      ok "JetBrainsMono Nerd Font installed to $FONT_DIR"
+    else
+      warn "Skipped font install. catppuccin glyphs will look broken until a Nerd Font is set in your terminal."
+    fi
   fi
 fi
 
