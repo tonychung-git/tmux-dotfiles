@@ -80,6 +80,42 @@ log "Installing tmux plugins via TPM"
 "$TPM_DIR/bin/install_plugins" >/dev/null
 ok "Plugins installed"
 
+# ── 6. zsh environment (macOS only) ───────────────────────────────────────────
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  # 6a. Oh My Zsh — unattended so it neither rewrites ~/.zshrc nor launches a shell.
+  if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+    log "Installing Oh My Zsh"
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    ok "Oh My Zsh installed"
+  else
+    ok "Oh My Zsh already present"
+  fi
+
+  # 6b. Powerlevel10k theme.
+  P10K_DIR="$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+  if [[ ! -d "$P10K_DIR" ]]; then
+    log "Installing Powerlevel10k"
+    git clone --depth 1 https://github.com/romkatv/powerlevel10k.git "$P10K_DIR"
+    ok "Powerlevel10k installed"
+  else
+    ok "Powerlevel10k already present"
+  fi
+
+  # 6c. zsh-syntax-highlighting (Homebrew).
+  if ! brew list zsh-syntax-highlighting >/dev/null 2>&1; then
+    log "Installing zsh-syntax-highlighting"
+    brew install zsh-syntax-highlighting
+  else
+    ok "zsh-syntax-highlighting already present"
+  fi
+
+  # 6d. Symlink the zsh dotfiles (existing real files are backed up timestamped).
+  link_dotfile "$DOTFILES_DIR/zsh/zshrc"    "$HOME/.zshrc"
+  link_dotfile "$DOTFILES_DIR/zsh/p10k.zsh" "$HOME/.p10k.zsh"
+  link_dotfile "$DOTFILES_DIR/zsh/zprofile" "$HOME/.zprofile"
+fi
+
 # ── 7. (Optional) install JetBrainsMono Nerd Font for the catppuccin glyphs ──
 # SSH users: install the font on the *client* (the box rendering the terminal),
 # not the server you SSH into.
