@@ -50,11 +50,16 @@ fi
 
 # ── 2. Ensure tmux is installed ───────────────────────────────────────────────
 if ! command -v tmux >/dev/null 2>&1; then
-  warn "tmux not found. Install with your package manager and re-run, e.g.:"
-  echo "    sudo apt install tmux      # Debian/Ubuntu"
-  echo "    sudo dnf install tmux      # Fedora"
-  echo "    brew install tmux          # macOS"
-  exit 1
+  if [[ "$(uname -s)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
+    log "tmux not found — installing via Homebrew"
+    brew install tmux
+  else
+    warn "tmux not found. Install with your package manager and re-run, e.g.:"
+    echo "    sudo apt install tmux      # Debian/Ubuntu"
+    echo "    sudo dnf install tmux      # Fedora"
+    echo "    brew install tmux          # macOS"
+    exit 1
+  fi
 fi
 ok "tmux $(tmux -V | awk '{print $2}')"
 
