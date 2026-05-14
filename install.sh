@@ -106,6 +106,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   if ! brew list zsh-syntax-highlighting >/dev/null 2>&1; then
     log "Installing zsh-syntax-highlighting"
     brew install zsh-syntax-highlighting
+    ok "zsh-syntax-highlighting installed"
   else
     ok "zsh-syntax-highlighting already present"
   fi
