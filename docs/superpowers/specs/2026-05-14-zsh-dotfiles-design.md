@@ -26,6 +26,7 @@ git clone git@github.com:tonychung-git/tmux-dotfiles.git ~/dotfiles && ~/dotfile
 - 目前 `~/.zshrc` 裡「不屬於 zsh/tmux 設定本身」的內容 —— 具體指 `CLOUDFLARE_API_TOKEN` export、`node@22` PATH export、`~/.local/bin` PATH export，這三段一律從進版控的 `zshrc` 中移除。
 - 不建立 `~/.zshrc.local`（或任何其他）「個人覆寫」機制 —— YAGNI。
 - zsh 部分不支援 Linux。tmux 部分維持現有的跨平台行為；zsh 區塊只在 macOS 執行，Linux 上跳過。
+- zsh 設定以 **Apple Silicon Mac** 為目標。`zsh/zshrc` 與 `zsh/zprofile` 沿用 `/opt/homebrew` 路徑（原樣複製擁有者設定的必然結果），Intel Mac（Homebrew 在 `/usr/local`）不在支援範圍。
 - 不變更登入 shell（`chsh`）—— macOS 預設已是 zsh。
 - 不管理、不輪換使用者的機密。
 

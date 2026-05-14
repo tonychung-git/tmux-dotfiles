@@ -540,7 +540,7 @@ Replace it with:
 7. *Optionally* downloads JetBrainsMono Nerd Font. Destination depends on OS: `~/.local/share/fonts/` (Linux), `~/Library/Fonts/` (macOS). Skip with `n` if you don't want it.
 8. Reloads any running tmux server.
 
-The zsh setup runs on macOS only; on Linux the installer does the tmux steps and skips zsh.
+The zsh setup targets macOS on Apple Silicon; on Linux the installer does the tmux steps and skips zsh.
 ```
 
 - [ ] **Step 4: Add `zsh/` to the Layout diagram**
