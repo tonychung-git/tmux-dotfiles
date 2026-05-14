@@ -37,6 +37,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     log "Homebrew not found — installing (this prompts for sudo and may take a while)"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     # Make brew usable for the rest of this run (Apple Silicon path — see spec scope).
+    if [[ ! -x /opt/homebrew/bin/brew ]]; then
+      warn "Homebrew install finished but /opt/homebrew/bin/brew is missing — cannot continue"
+      exit 1
+    fi
     eval "$(/opt/homebrew/bin/brew shellenv)"
     ok "Homebrew installed"
   else
