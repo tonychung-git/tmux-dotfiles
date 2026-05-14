@@ -1,6 +1,6 @@
 # dotfiles
 
-My personal config for tmux and friends. One-line setup on any new Linux/macOS box.
+My personal config for zsh and tmux. One-line setup on a new macOS box (the tmux portion also works on Linux).
 
 Tested on Ubuntu and macOS. Installer uses bash 3.2-compatible syntax (works with Apple's default `/bin/bash`).
 
@@ -10,14 +10,23 @@ Tested on Ubuntu and macOS. Installer uses bash 3.2-compatible syntax (works wit
 git clone git@github.com:tonychung-git/tmux-dotfiles.git ~/dotfiles && ~/dotfiles/install.sh
 ```
 
+> The clone URL is SSH, so a fresh Mac needs an SSH key registered with GitHub first
+> (<https://docs.github.com/en/authentication/connecting-to-github-with-ssh>). No key yet?
+> Use the HTTPS URL instead:
+> `git clone https://github.com/tonychung-git/tmux-dotfiles.git ~/dotfiles && ~/dotfiles/install.sh`
+
 The installer:
 
-1. Verifies `tmux` is on `PATH`.
-2. Backs up an existing `~/.tmux.conf` (timestamped) and symlinks the version in this repo.
-3. Clones [TPM](https://github.com/tmux-plugins/tpm) if missing.
-4. Installs all plugins declared in `tmux/tmux.conf` (catppuccin theme, yank, vim-tmux-navigator, sensible).
-5. *Optionally* downloads JetBrainsMono Nerd Font. Destination depends on OS: `~/.local/share/fonts/` (Linux), `~/Library/Fonts/` (macOS). Skip with `n` if you don't want it.
-6. Reloads any running tmux server.
+1. **macOS:** installs [Homebrew](https://brew.sh) if it's missing.
+2. Ensures `tmux` is installed (macOS: installs it via Homebrew; Linux: prompts you to install it and exits).
+3. Backs up an existing `~/.tmux.conf` (timestamped) and symlinks the version in this repo.
+4. Clones [TPM](https://github.com/tmux-plugins/tpm) if missing.
+5. Installs all plugins declared in `tmux/tmux.conf` (catppuccin theme, yank, vim-tmux-navigator, sensible).
+6. **macOS:** sets up the zsh environment — [Oh My Zsh](https://ohmyz.sh), the [Powerlevel10k](https://github.com/romkatv/powerlevel10k) theme, and `zsh-syntax-highlighting` — then symlinks `~/.zshrc`, `~/.p10k.zsh`, and `~/.zprofile` from this repo (existing files are backed up timestamped).
+7. *Optionally* downloads JetBrainsMono Nerd Font. Destination depends on OS: `~/.local/share/fonts/` (Linux), `~/Library/Fonts/` (macOS). Skip with `n` if you don't want it.
+8. Reloads any running tmux server.
+
+The zsh setup targets macOS on Apple Silicon; on Linux the installer does the tmux steps and skips zsh.
 
 Re-running is safe — it's idempotent.
 
@@ -56,8 +65,12 @@ Prefix is **`` ` ``** (backtick).
 dotfiles/
 ├── README.md
 ├── install.sh
-└── tmux/
-    └── tmux.conf
+├── tmux/
+│   └── tmux.conf
+└── zsh/
+    ├── zshrc       # generic .zshrc (Oh My Zsh + Powerlevel10k + syntax highlighting)
+    ├── p10k.zsh    # Powerlevel10k appearance config
+    └── zprofile    # loads Homebrew into PATH
 ```
 
 ## Adding more configs later
