@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# tmux + Nerd Font one-shot installer.
-# Idempotent: safe to re-run. Backs up any existing ~/.tmux.conf.
+# zsh + tmux one-shot installer (Apple Silicon macOS; tmux portion also works on Linux).
+# Idempotent: safe to re-run. Backs up any existing real dotfiles before symlinking.
 
 set -euo pipefail
 
@@ -16,7 +16,7 @@ ok()   { printf '\033[1;32m ok\033[0m %s\n' "$*"; }
 link_dotfile() {
   local source="$1" target="$2"
   if [[ ! -e "$source" ]]; then
-    warn "link_dotfile: source not found, skipping: $source"
+    warn "link_dotfile: source not found, aborting: $source"
     return 1
   fi
   if [[ -e "$target" && ! -L "$target" ]]; then
