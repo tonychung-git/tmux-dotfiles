@@ -11,6 +11,22 @@ log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!! \033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m ok\033[0m %s\n' "$*"; }
 
+# Back up an existing real file (timestamped), drop an existing symlink,
+# then symlink our version in. $1 = repo source path, $2 = target in $HOME.
+link_dotfile() {
+  local source="$1" target="$2"
+  if [[ -e "$target" && ! -L "$target" ]]; then
+    local backup="$target.backup-$TS"
+    log "Backing up existing $target to $backup"
+    mv "$target" "$backup"
+  elif [[ -L "$target" ]]; then
+    log "Removing existing symlink $target"
+    rm "$target"
+  fi
+  ln -s "$source" "$target"
+  ok "Linked $target -> $source"
+}
+
 # ── 1. Ensure tmux is installed ───────────────────────────────────────────────
 if ! command -v tmux >/dev/null 2>&1; then
   warn "tmux not found. Install with your package manager and re-run, e.g.:"
@@ -22,20 +38,7 @@ fi
 ok "tmux $(tmux -V | awk '{print $2}')"
 
 # ── 2. Symlink tmux.conf ──────────────────────────────────────────────────────
-TARGET="$HOME/.tmux.conf"
-SOURCE="$DOTFILES_DIR/tmux/tmux.conf"
-
-if [[ -e "$TARGET" && ! -L "$TARGET" ]]; then
-  BACKUP="$TARGET.backup-$TS"
-  log "Backing up existing ~/.tmux.conf to $BACKUP"
-  mv "$TARGET" "$BACKUP"
-elif [[ -L "$TARGET" ]]; then
-  log "Removing existing symlink"
-  rm "$TARGET"
-fi
-
-ln -s "$SOURCE" "$TARGET"
-ok "Linked $TARGET -> $SOURCE"
+link_dotfile "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 # ── 3. Install TPM (tmux plugin manager) ──────────────────────────────────────
 TPM_DIR="$HOME/.tmux/plugins/tpm"
@@ -109,7 +112,7 @@ fi
 
 # ── 6. Reload running tmux server, if any ─────────────────────────────────────
 if tmux info >/dev/null 2>&1; then
-  tmux source-file "$TARGET"
+  tmux source-file "$HOME/.tmux.conf"
   ok "Reloaded running tmux server"
 fi
 
