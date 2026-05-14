@@ -7,7 +7,7 @@ Tested on Ubuntu and macOS. Installer uses bash 3.2-compatible syntax (works wit
 ## Quick install
 
 ```bash
-git clone https://github.com/<your-user>/dotfiles.git ~/dotfiles
+git clone https://github.com/tonychung-git/tmux-dotfiles.git ~/dotfiles
 ~/dotfiles/install.sh
 ```
 
