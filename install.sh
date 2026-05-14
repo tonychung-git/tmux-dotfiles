@@ -31,7 +31,20 @@ link_dotfile() {
   ok "Linked $target -> $source"
 }
 
-# ── 1. Ensure tmux is installed ───────────────────────────────────────────────
+# ── 1. Bootstrap Homebrew (macOS only) ────────────────────────────────────────
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  if ! command -v brew >/dev/null 2>&1; then
+    log "Homebrew not found — installing (this prompts for sudo and may take a while)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Make brew usable for the rest of this run (Apple Silicon path — see spec scope).
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    ok "Homebrew installed"
+  else
+    ok "Homebrew already present"
+  fi
+fi
+
+# ── 2. Ensure tmux is installed ───────────────────────────────────────────────
 if ! command -v tmux >/dev/null 2>&1; then
   warn "tmux not found. Install with your package manager and re-run, e.g.:"
   echo "    sudo apt install tmux      # Debian/Ubuntu"
@@ -41,10 +54,10 @@ if ! command -v tmux >/dev/null 2>&1; then
 fi
 ok "tmux $(tmux -V | awk '{print $2}')"
 
-# ── 2. Symlink tmux.conf ──────────────────────────────────────────────────────
+# ── 3. Symlink tmux.conf ──────────────────────────────────────────────────────
 link_dotfile "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 
-# ── 3. Install TPM (tmux plugin manager) ──────────────────────────────────────
+# ── 4. Install TPM (tmux plugin manager) ──────────────────────────────────────
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 if [[ ! -d "$TPM_DIR" ]]; then
   log "Installing TPM"
@@ -53,12 +66,12 @@ else
   ok "TPM already present"
 fi
 
-# ── 4. Install plugins listed in tmux.conf ────────────────────────────────────
+# ── 5. Install plugins listed in tmux.conf ────────────────────────────────────
 log "Installing tmux plugins via TPM"
 "$TPM_DIR/bin/install_plugins" >/dev/null
 ok "Plugins installed"
 
-# ── 5. (Optional) install JetBrainsMono Nerd Font for the catppuccin glyphs ──
+# ── 7. (Optional) install JetBrainsMono Nerd Font for the catppuccin glyphs ──
 # SSH users: install the font on the *client* (the box rendering the terminal),
 # not the server you SSH into.
 OS="$(uname -s)"
@@ -114,7 +127,7 @@ else
   fi
 fi
 
-# ── 6. Reload running tmux server, if any ─────────────────────────────────────
+# ── 8. Reload running tmux server, if any ─────────────────────────────────────
 if tmux info >/dev/null 2>&1; then
   tmux source-file "$HOME/.tmux.conf"
   ok "Reloaded running tmux server"
