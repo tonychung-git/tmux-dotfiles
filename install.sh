@@ -15,6 +15,10 @@ ok()   { printf '\033[1;32m ok\033[0m %s\n' "$*"; }
 # then symlink our version in. $1 = repo source path, $2 = target in $HOME.
 link_dotfile() {
   local source="$1" target="$2"
+  if [[ ! -e "$source" ]]; then
+    warn "link_dotfile: source not found, skipping: $source"
+    return 1
+  fi
   if [[ -e "$target" && ! -L "$target" ]]; then
     local backup="$target.backup-$TS"
     log "Backing up existing $target to $backup"
