@@ -195,3 +195,11 @@ cat <<'EOF'
 │  (Windows Terminal / iTerm2 / gnome-terminal / etc).      │
 ╰───────────────────────────────────────────────────────────╯
 EOF
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  cat <<'EOF'
+zsh: Oh My Zsh + Powerlevel10k are configured. Open a new terminal,
+     or run `exec zsh`, to load the new shell environment.
+
+EOF
+fi
