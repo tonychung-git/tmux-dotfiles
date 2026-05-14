@@ -23,7 +23,7 @@ The installer:
 4. Clones [TPM](https://github.com/tmux-plugins/tpm) if missing.
 5. Installs all plugins declared in `tmux/tmux.conf` (catppuccin theme, yank, vim-tmux-navigator, sensible).
 6. **macOS:** sets up the zsh environment — [Oh My Zsh](https://ohmyz.sh), the [Powerlevel10k](https://github.com/romkatv/powerlevel10k) theme, and `zsh-syntax-highlighting` — then symlinks `~/.zshrc`, `~/.p10k.zsh`, and `~/.zprofile` from this repo (existing files are backed up timestamped).
-7. *Optionally* downloads JetBrainsMono Nerd Font. Destination depends on OS: `~/.local/share/fonts/` (Linux), `~/Library/Fonts/` (macOS). Skip with `n` if you don't want it.
+7. *Optionally* installs JetBrainsMono Nerd Font — on macOS via a Homebrew cask (brew-managed), on Linux downloaded to `~/.local/share/fonts/`. Skip with `n` if you don't want it.
 8. Reloads any running tmux server.
 
 The zsh setup targets macOS on Apple Silicon; on Linux the installer does the tmux steps and skips zsh.
