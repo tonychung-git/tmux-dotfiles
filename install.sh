@@ -53,8 +53,23 @@ if ! command -v tmux >/dev/null 2>&1; then
   if [[ "$(uname -s)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
     log "tmux not found — installing via Homebrew"
     brew install tmux
+  elif command -v apt-get >/dev/null 2>&1; then
+    log "tmux not found — installing via apt-get (may prompt for sudo password)"
+    sudo apt-get update && sudo apt-get install -y tmux
+  elif command -v dnf >/dev/null 2>&1; then
+    log "tmux not found — installing via dnf (may prompt for sudo password)"
+    sudo dnf install -y tmux
+  elif command -v pacman >/dev/null 2>&1; then
+    log "tmux not found — installing via pacman (may prompt for sudo password)"
+    sudo pacman -S --noconfirm tmux
+  elif command -v zypper >/dev/null 2>&1; then
+    log "tmux not found — installing via zypper (may prompt for sudo password)"
+    sudo zypper install -y tmux
+  elif command -v apk >/dev/null 2>&1; then
+    log "tmux not found — installing via apk (may prompt for sudo password)"
+    sudo apk add tmux
   else
-    warn "tmux not found. Install with your package manager and re-run, e.g.:"
+    warn "tmux not found and no supported package manager detected. Install it and re-run, e.g.:"
     echo "    sudo apt install tmux      # Debian/Ubuntu"
     echo "    sudo dnf install tmux      # Fedora"
     echo "    brew install tmux          # macOS"

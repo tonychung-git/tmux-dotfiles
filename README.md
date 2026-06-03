@@ -22,7 +22,7 @@ git clone git@github.com:tonychung-git/tmux-dotfiles.git ~/dotfiles && ~/dotfile
 The installer:
 
 1. **macOS:** installs [Homebrew](https://brew.sh) if it's missing.
-2. Ensures `tmux` is installed (macOS: installs it via Homebrew; Linux: prompts you to install it and exits).
+2. Ensures `tmux` is installed (macOS: via Homebrew; Linux: auto-detects your package manager — apt/dnf/pacman/zypper/apk — and installs it, which may prompt for your sudo password).
 3. Backs up an existing `~/.tmux.conf` (timestamped) and symlinks the version in this repo.
 4. Clones [TPM](https://github.com/tmux-plugins/tpm) if missing.
 5. Installs all plugins declared in `tmux/tmux.conf` (catppuccin theme, yank, vim-tmux-navigator, sensible).
